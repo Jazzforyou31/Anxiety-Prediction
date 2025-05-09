@@ -1,0 +1,197 @@
+{% extends 'anxiety_app/base.html' %}
+
+{% block title %}Dashboard - Anxiety Prediction{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-12">
+        <h1 class="mb-4">Your Anxiety Prediction Dashboard</h1>
+        
+        {% if predictions %}
+            <div class="alert alert-info">
+                Welcome back, {{ user.username }}! You have made {{ predictions|length }} prediction(s).
+            </div>
+            
+            <div class="row mb-4">
+                <div class="col-md-4">
+                    <div class="card">
+                        <div class="card-header bg-primary text-white">
+                            <h4>Latest Prediction</h4>
+                        </div>
+                        <div class="card-body">
+                            <h2 class="text-center mb-3">{{ latest_prediction.predicted_anxiety|floatformat:2 }}</h2>
+                            <p class="text-center">
+                                {% if latest_prediction.predicted_anxiety < 3 %}
+                                    <span class="badge bg-success">Low Anxiety</span>
+                                {% elif latest_prediction.predicted_anxiety < 6 %}
+                                    <span class="badge bg-warning">Moderate Anxiety</span>
+                                {% else %}
+                                    <span class="badge bg-danger">High Anxiety</span>
+                                {% endif %}
+                            </p>
+                            <p class="text-center text-muted">
+                                Predicted on {{ latest_prediction.created_at|date:"F j, Y, g:i a" }}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-4">
+                    <div class="card">
+                        <div class="card-header bg-primary text-white">
+                            <h4>Average Anxiety Score</h4>
+                        </div>
+                        <div class="card-body">
+                            <h2 class="text-center">{{ average_score|floatformat:2 }}</h2>
+                            <div class="progress mt-3">
+                                <div class="progress-bar 
+                                    {% if average_score < 3 %}
+                                        bg-success
+                                    {% elif average_score < 6 %}
+                                        bg-warning
+                                    {% else %}
+                                        bg-danger
+                                    {% endif %}" 
+                                    role="progressbar" 
+                                    style="width: {{ average_score_percent }}%;" 
+                                    aria-valuenow="{{ average_score_percent }}" 
+                                    aria-valuemin="0" 
+                                    aria-valuemax="100">{{ average_score_percent }}%</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-4">
+                    <div class="card">
+                        <div class="card-header bg-primary text-white">
+                            <h4>Prediction Trends</h4>
+                        </div>
+                        <div class="card-body">
+                            {% if predictions|length > 1 %}
+                                {% if trend > 0 %}
+                                    <p class="text-center">
+                                        <i class="fas fa-arrow-up text-danger"></i> Your anxiety score has increased by {{ trend|floatformat:2 }} in your last prediction
+                                    </p>
+                                {% elif trend < 0 %}
+                                    <p class="text-center">
+                                        <i class="fas fa-arrow-down text-success"></i> Your anxiety score has decreased by {{ trend|floatformat:2|cut:"-" }} in your last prediction
+                                    </p>
+                                {% else %}
+                                    <p class="text-center">
+                                        <i class="fas fa-equals text-warning"></i> Your anxiety score has not changed in your last prediction
+                                    </p>
+                                {% endif %}
+                            {% else %}
+                                <p class="text-center">Not enough data to show trends</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="card mb-4">
+                        <div class="card-header bg-primary text-white">
+                            <h4>Anxiety Score History</h4>
+                        </div>
+                        <div class="card-body">
+                            <canvas id="anxietyChart" width="400" height="200"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="card">
+                        <div class="card-header bg-primary text-white">
+                            <h4>Your Prediction History</h4>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th>Date</th>
+                                            <th>Anxiety Score</th>
+                                            <th>Stress Impact</th>
+                                            <th>Sleep Hours</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for prediction in predictions %}
+                                            <tr>
+                                                <td>{{ prediction.created_at|date:"M d, Y" }}</td>
+                                                <td>
+                                                    <span class="badge 
+                                                        {% if prediction.predicted_anxiety < 3 %}
+                                                            bg-success
+                                                        {% elif prediction.predicted_anxiety < 6 %}
+                                                            bg-warning
+                                                        {% else %}
+                                                            bg-danger
+                                                        {% endif %}">
+                                                        {{ prediction.predicted_anxiety|floatformat:2 }}
+                                                    </span>
+                                                </td>
+                                                <td>{{ prediction.stress_impact_score }}</td>
+                                                <td>{{ prediction.sleep_hours }}</td>
+                                                <td>
+                                                    <a href="{% url 'prediction_result' prediction.id %}" class="btn btn-sm btn-primary">View Details</a>
+                                                </td>
+                                            </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% else %}
+            <div class="alert alert-warning">
+                <p>You haven't made any predictions yet.</p>
+                <a href="{% url 'prediction_form' %}" class="btn btn-primary mt-2">Make Your First Prediction</a>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        {% if predictions|length > 0 %}
+            const ctx = document.getElementById('anxietyChart').getContext('2d');
+            const anxietyChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: [{% for prediction in predictions %}'{{ prediction.created_at|date:"M d, Y" }}'{% if not forloop.last %}, {% endif %}{% endfor %}],
+                    datasets: [{
+                        label: 'Anxiety Score',
+                        data: [{% for prediction in predictions %}{{ prediction.predicted_anxiety }}{% if not forloop.last %}, {% endif %}{% endfor %}],
+                        backgroundColor: 'rgba(95, 158, 160, 0.2)',
+                        borderColor: 'rgba(95, 158, 160, 1)',
+                        borderWidth: 2,
+                        tension: 0.1
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 10
+                        }
+                    },
+                    responsive: true,
+                    maintainAspectRatio: false
+                }
+            });
+        {% endif %}
+    });
+</script>
+{% endblock %} 

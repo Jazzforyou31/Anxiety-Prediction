@@ -1,0 +1,196 @@
+{% extends 'anxiety_app/base.html' %}
+
+{% block title %}Home - Anxiety Prediction{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-12 text-center mb-5">
+        <div class="home-header" style="position: relative; padding: 3rem 0;">
+            <h1 class="display-4 fw-bold" style="background: linear-gradient(to right, #6a11cb, #2575fc); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Anxiety Prediction System</h1>
+            <p class="lead mt-3" style="font-size: 1.3rem; max-width: 800px; margin: 0 auto;">
+                Using advanced machine learning to provide personalized anxiety score predictions based on your sleep, stress, and health factors.
+            </p>
+            <div class="animate-wave" style="position: absolute; bottom: 0; left: 0; width: 100%; height: 70px; background: url('https://svgshare.com/i/Tg6.svg'); background-size: 1000px 100%; animation: wave 15s linear infinite; opacity: 0.2; z-index: -1;"></div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    {% if user.is_authenticated %}
+        <div class="col-md-8 offset-md-2">
+            <div class="cta-card text-center p-5" style="background: linear-gradient(135deg, rgba(106, 17, 203, 0.1), rgba(37, 117, 252, 0.1)); border-radius: 20px;">
+                <h2 class="mb-4">Ready for your assessment?</h2>
+                <div class="d-grid gap-3 d-md-flex justify-content-md-center">
+                    <a href="{% url 'prediction_form' %}" class="btn btn-primary btn-lg px-5 py-3">
+                        <i class="fas fa-chart-line me-2"></i> Make a Prediction
+                    </a>
+                    <a href="{% url 'dashboard' %}" class="btn btn-outline-primary btn-lg px-5 py-3">
+                        <i class="fas fa-tachometer-alt me-2"></i> View Your Dashboard
+                    </a>
+                </div>
+            </div>
+        </div>
+    {% else %}
+        <div class="col-md-6">
+            <div class="card h-100">
+                <div class="card-body d-flex flex-column justify-content-between p-5">
+                    <div>
+                        <h2 class="card-title mb-4 text-center">Get Started</h2>
+                        <p class="card-text text-center mb-4">Create an account or log in to make predictions and track your anxiety levels over time.</p>
+                    </div>
+                    <div class="d-grid gap-3">
+                        <a href="{% url 'register' %}" class="btn btn-primary py-3">
+                            <i class="fas fa-user-plus me-2"></i> Register
+                        </a>
+                        <a href="{% url 'login' %}" class="btn btn-outline-primary py-3">
+                            <i class="fas fa-sign-in-alt me-2"></i> Login
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card h-100 border-0 bg-transparent" style="box-shadow: none;">
+                <div class="card-body text-center">
+                    <div class="mental-health-illustration">
+                        <svg width="300" height="300" viewBox="0 0 600 600" xmlns="http://www.w3.org/2000/svg">
+                            <style>
+                                .brain-path {
+                                    fill: none;
+                                    stroke: url(#brain-gradient);
+                                    stroke-width: 8;
+                                    stroke-linecap: round;
+                                    stroke-linejoin: round;
+                                    stroke-dasharray: 2000;
+                                    stroke-dashoffset: 2000;
+                                    animation: draw 3s ease forwards;
+                                }
+                                @keyframes draw {
+                                    to {
+                                        stroke-dashoffset: 0;
+                                    }
+                                }
+                                .circle {
+                                    fill: rgba(106, 17, 203, 0.1);
+                                    animation: pulse 2s infinite;
+                                }
+                                @keyframes pulse {
+                                    0% { transform: scale(0.95); opacity: 0.7; }
+                                    50% { transform: scale(1); opacity: 0.9; }
+                                    100% { transform: scale(0.95); opacity: 0.7; }
+                                }
+                            </style>
+                            <defs>
+                                <linearGradient id="brain-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" stop-color="#6a11cb" />
+                                    <stop offset="100%" stop-color="#2575fc" />
+                                </linearGradient>
+                            </defs>
+                            <circle class="circle" cx="300" cy="300" r="250" />
+                            <path class="brain-path" d="M200,250 C200,200 250,150 300,150 C350,150 400,200 400,250 C400,300 350,350 300,350 C250,350 200,300 200,250 Z" />
+                            <path class="brain-path" d="M180,270 C180,220 230,170 300,170 C370,170 420,220 420,270 C420,320 370,370 300,370 C230,370 180,320 180,270 Z" />
+                            <path class="brain-path" d="M240,200 C240,180 270,160 300,160 C330,160 360,180 360,200 C360,220 330,240 300,240 C270,240 240,220 240,200 Z" />
+                            <path class="brain-path" d="M240,300 C240,280 270,260 300,260 C330,260 360,280 360,300 C360,320 330,340 300,340 C270,340 240,320 240,300 Z" />
+                            <path class="brain-path" d="M300,150 L300,120" />
+                            <path class="brain-path" d="M230,180 L200,150" />
+                            <path class="brain-path" d="M370,180 L400,150" />
+                            <path class="brain-path" d="M300,370 L300,400" />
+                            <path class="brain-path" d="M230,340 L200,370" />
+                            <path class="brain-path" d="M370,340 L400,370" />
+                        </svg>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+</div>
+
+<div class="row mt-5">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <h3 class="m-0"><i class="fas fa-info-circle me-2"></i> About the System</h3>
+            </div>
+            <div class="card-body p-4">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="mb-4">
+                            <h4 class="mb-3"><i class="fas fa-brain text-primary me-2"></i> Machine Learning Model</h4>
+                            <p>This prediction system uses a Gradient Boosting Regressor model trained on various stress and sleep-related factors to predict anxiety scores with high accuracy.</p>
+                            <p>The model analyzes inputs related to:</p>
+                            <ul class="list-group list-group-flush mb-4">
+                                <li class="list-group-item bg-transparent px-0">
+                                    <i class="fas fa-bed text-primary me-2"></i> Sleep quality and duration
+                                </li>
+                                <li class="list-group-item bg-transparent px-0">
+                                    <i class="fas fa-bolt text-primary me-2"></i> Stress impact levels
+                                </li>
+                                <li class="list-group-item bg-transparent px-0">
+                                    <i class="fas fa-balance-scale text-primary me-2"></i> Activity-stress balance
+                                </li>
+                                <li class="list-group-item bg-transparent px-0">
+                                    <i class="fas fa-heartbeat text-primary me-2"></i> Health risk factors
+                                </li>
+                                <li class="list-group-item bg-transparent px-0">
+                                    <i class="fas fa-user-md text-primary me-2"></i> Therapy frequency
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <h4 class="mb-3"><i class="fas fa-chart-line text-primary me-2"></i> Features</h4>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="feature-card p-3 mb-3 rounded" style="background: linear-gradient(135deg, rgba(106, 17, 203, 0.05), rgba(37, 117, 252, 0.05));">
+                                    <h5><i class="fas fa-chart-pie me-2 text-primary"></i> Prediction</h5>
+                                    <p class="mb-0 small">Personalized anxiety prediction based on your inputs</p>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="feature-card p-3 mb-3 rounded" style="background: linear-gradient(135deg, rgba(106, 17, 203, 0.05), rgba(37, 117, 252, 0.05));">
+                                    <h5><i class="fas fa-user-shield me-2 text-primary"></i> Security</h5>
+                                    <p class="mb-0 small">User accounts to securely track your history</p>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="feature-card p-3 mb-3 rounded" style="background: linear-gradient(135deg, rgba(106, 17, 203, 0.05), rgba(37, 117, 252, 0.05));">
+                                    <h5><i class="fas fa-tachometer-alt me-2 text-primary"></i> Dashboard</h5>
+                                    <p class="mb-0 small">Visual analytics to track your progress</p>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="feature-card p-3 mb-3 rounded" style="background: linear-gradient(135deg, rgba(106, 17, 203, 0.05), rgba(37, 117, 252, 0.05));">
+                                    <h5><i class="fas fa-history me-2 text-primary"></i> History</h5>
+                                    <p class="mb-0 small">Track changes in your anxiety levels over time</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="alert alert-warning mt-3">
+                            <div class="d-flex">
+                                <div class="me-3">
+                                    <i class="fas fa-exclamation-triangle fa-2x text-warning"></i>
+                                </div>
+                                <div>
+                                    <h5 class="alert-heading">Important Note</h5>
+                                    <p class="mb-0">This tool is for educational purposes only and should not replace professional medical advice. If you're experiencing anxiety symptoms, please consult a healthcare professional.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+@keyframes wave {
+    0% {
+        background-position-x: 0;
+    }
+    100% {
+        background-position-x: 1000px;
+    }
+}
+</style>
+{% endblock %} 

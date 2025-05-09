@@ -1,0 +1,85 @@
+{% extends 'anxiety_app/base.html' %}
+
+{% block title %}Prediction Result - Anxiety Prediction{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-10">
+        <h1 class="mb-4">Anxiety Prediction Result</h1>
+        
+        <div class="alert alert-info mb-4">
+            Your predicted anxiety score is <strong>{{ prediction.predicted_anxiety|floatformat:2 }}</strong>
+        </div>
+        
+        <div class="card mb-4">
+            <div class="card-header">
+                <h3>Interpretation</h3>
+            </div>
+            <div class="card-body">
+                <p>The anxiety score is on a continuous scale. Here's how to interpret your result:</p>
+                
+                <div class="row mt-3">
+                    <div class="col-md-4">
+                        <div class="card bg-success text-white">
+                            <div class="card-body text-center">
+                                <h5 class="card-title">Low Anxiety</h5>
+                                <p class="card-text">Score: 0-30</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card bg-warning text-dark">
+                            <div class="card-body text-center">
+                                <h5 class="card-title">Moderate Anxiety</h5>
+                                <p class="card-text">Score: 31-60</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card bg-danger text-white">
+                            <div class="card-body text-center">
+                                <h5 class="card-title">High Anxiety</h5>
+                                <p class="card-text">Score: 61-100</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <p class="mt-4">
+                    <strong>Note:</strong> This prediction is based on the machine learning model and should not be considered as medical advice. 
+                    If you're experiencing anxiety symptoms, please consult with a healthcare professional.
+                </p>
+            </div>
+        </div>
+        
+        <div class="card prediction-result">
+            <div class="card-header">
+                <h3>Input Summary</h3>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <p><strong>Stress Sleep Impact:</strong> {{ prediction.stress_sleep_impact }}</p>
+                        <p><strong>Stress Impact Score:</strong> {{ prediction.stress_impact_score }}</p>
+                        <p><strong>Sleep Stress Severity:</strong> {{ prediction.sleep_stress_severity }}</p>
+                        <p><strong>Sleep Hours:</strong> {{ prediction.sleep_hours }}</p>
+                        <p><strong>Activity Stress Balance:</strong> {{ prediction.activity_stress_balance }}</p>
+                    </div>
+                    <div class="col-md-6">
+                        <p><strong>High Risk Factors:</strong> {{ prediction.high_risk_factors }}</p>
+                        <p><strong>Therapy Sessions:</strong> {{ prediction.therapy_sessions }}</p>
+                        <p><strong>Stress Sleep Composite:</strong> {{ prediction.stress_sleep_composite }}</p>
+                        <p><strong>Health Risk Score:</strong> {{ prediction.health_risk_score }}</p>
+                        <p><strong>Date Created:</strong> {{ prediction.created_at|date:"F j, Y, g:i a" }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="mt-4">
+            <a href="{% url 'prediction_form' %}" class="btn btn-primary">Make Another Prediction</a>
+            <a href="{% url 'home' %}" class="btn btn-secondary ms-2">Back to Home</a>
+        </div>
+    </div>
+</div>
+{% endblock %} 

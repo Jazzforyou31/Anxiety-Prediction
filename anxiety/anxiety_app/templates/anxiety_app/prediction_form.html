@@ -1,0 +1,44 @@
+{% extends 'anxiety_app/base.html' %}
+
+{% block title %}Make Prediction - Anxiety Prediction{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-10">
+        <h1 class="mb-4">Anxiety Prediction Form</h1>
+        <p class="mb-4">
+            Fill in the form below with your information to get a prediction of your anxiety score.
+        </p>
+        
+        <div class="card">
+            <div class="card-body prediction-form">
+                <form method="post">
+                    {% csrf_token %}
+                    
+                    {% for field in form %}
+                    <div class="form-group">
+                        <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
+                        <input type="number" step="0.1" name="{{ field.name }}" id="{{ field.id_for_label }}" 
+                               class="form-control {% if field.errors %}is-invalid{% endif %}" 
+                               value="{{ field.value|default:'' }}">
+                        {% if field.help_text %}
+                            <div class="help-text mt-1">{{ field.help_text }}</div>
+                        {% endif %}
+                        {% if field.errors %}
+                            <div class="invalid-feedback">
+                                {{ field.errors.0 }}
+                            </div>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                    
+                    <div class="mt-4">
+                        <button type="submit" class="btn btn-primary">Get Prediction</button>
+                        <a href="{% url 'home' %}" class="btn btn-secondary ms-2">Cancel</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 
